@@ -1,80 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Markdown 文本库</title>
-<style>
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    #fileList {
-        list-style-type: none;
-    }
-    .copy-button {
-        cursor: pointer;
-        margin-left: 10px;
-        color: blue;
-        text-decoration: underline;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown 文本库</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #fileList {
+            list-style-type: none;
+        }
+        .copy-button {
+            cursor: pointer;
+            margin-left: 10px;
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/showdown"></script>
 </head>
 <body>
-<div class="container">
-    <h1>Markdown 文本库</h1>
+    <div class="container">
+        <h1>Markdown 文本库</h1>
 
-    <input type="file" id="fileInput" accept=".md">
+        <input type="file" id="fileInput" accept=".md">
+        <button id="uploadButton">上传文件并复制链接</button>
 
-    <ul id="fileList"></ul>
-</div>
+        <ul id="fileList"></ul>
+    </div>
 
-<script>
-document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+    <script>
+        document.getElementById('uploadButton').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) {
+                alert('请选择要上传的文件');
+                return;
+            }
 
-function handleFileSelect(event) {
-    const fileList = event.target.files;
+            const file = fileInput.files[0];
+            const reader = new FileReader();
 
-    for (const file of fileList) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const markdownContent = e.target.result;
-            const fileName = file.name;
+            reader.onload = function(e) {
+                const markdownContent = e.target.result;
+                const fileName = file.name;
 
-            const converter = new showdown.Converter();
-            const htmlContent = converter.makeHtml(markdownContent);
+                const converter = new showdown.Converter();
+                const htmlContent = converter.makeHtml(markdownContent);
 
-            const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
-            const htmlUrl = URL.createObjectURL(htmlBlob);
+                const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
+                const htmlUrl = URL.createObjectURL(htmlBlob);
 
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <span>${fileName.replace('.md', '.html')}</span>
-                <a href="${htmlUrl}" target="_blank">查看</a>
-                <button class="copy-button" data-url="${htmlUrl}">复制链接</button>
-            `;
-            document.getElementById('fileList').appendChild(listItem);
-        };
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <span>${fileName.replace('.md', '.html')}</span>
+                    <a href="${htmlUrl}" target="_blank">查看</a>
+                    <button class="copy-button" data-url="${htmlUrl}">复制链接</button>
+                `;
+                document.getElementById('fileList').appendChild(listItem);
+            };
 
-        reader.readAsText(file);
-    }
-}
-
-document.getElementById('fileList').addEventListener('click', function(event) {
-    if (event.target.classList.contains('copy-button')) {
-        const url = event.target.getAttribute('data-url');
-        
-        navigator.clipboard.writeText(url).then(function() {
-            alert('链接已复制到剪贴板');
-        }, function() {
-            alert('复制链接失败');
+            reader.readAsText(file);
         });
-    }
-});
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/showdown"></script>
+        document.getElementById('fileList').addEventListener('click', function(event) {
+            if (event.target.classList.contains('copy-button')) {
+                const url = event.target.getAttribute('data-url');
+
+                navigator.clipboard.writeText(url).then(function() {
+                    alert('链接已复制到剪贴板');
+                }, function() {
+                    alert('复制链接失败');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
