@@ -20,6 +20,8 @@
             text-decoration: underline;
         }
     </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/showdown"></script>
 </head>
 <body>
@@ -62,7 +64,7 @@
                 document.getElementById('fileList').appendChild(listItem);
             };
 
-            reader.readAsText(file, 'UTF-8'); // 指定使用 UTF-8 编码格式读取文件内容
+            reader.readAsText(file, 'UTF-8');
 
         });
 
@@ -75,6 +77,14 @@
                 }, function() {
                     alert('复制链接失败');
                 });
+            }
+        });
+
+        MathJax.startup.promise.then(function() {
+            const mathElements = document.getElementsByClassName('math');
+            for (let i = 0; i < mathElements.length; i++) {
+                const mathElement = mathElements[i];
+                MathJax.typesetPromise([mathElement]);
             }
         });
     </script>
