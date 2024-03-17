@@ -62,7 +62,8 @@
                 document.getElementById('fileList').appendChild(listItem);
             };
 
-            reader.readAsText(file);
+            reader.readAsText(file, 'UTF-8'); // 指定使用 UTF-8 编码格式读取文件内容
+
         });
 
         document.getElementById('fileList').addEventListener('click', function(event) {
